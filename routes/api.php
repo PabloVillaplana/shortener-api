@@ -17,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('{shot_url}', 'App\Http\Controllers\Api\UrlShortenerController@redirectShortUrl');
+
+Route::get('/top-100','App\Http\Controllers\Api\UrlShortenerController@topTenUrlVisits');
