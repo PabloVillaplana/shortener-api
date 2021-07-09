@@ -3,33 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseApiController;
+use App\Http\Requests\UrlShorterRequest;
 use App\Models\UrlShortener;
-use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class UrlShortenerController extends BaseApiController
 {
 
     public function redirectShortUrl($shorUrl)
     {
-        $url = UrlShortener::where('short_url', $shorUrl);
+        $url = UrlShortener::where('short_url', $shorUrl)->first();
 
         if ($url) {
-            $url->visits +=;
+            $url->visits ++;
+            $url->save();
         }
 
-        return $url ? redirect($url->url) : $this->errorResponse('Short Url Not Found', $shorUrl);
+        return $url ? redirect($url->url) : $this->errorResponse('Short Url Not Found', 404);
     }
 
     public function topTenUrlVisits()
     {
-        $urls = UrlShortener::all()->sortBy('visits');
+        $urls = UrlShortener::orderBy('visits','desc')->get();
 
-        return $this->successResponse($urls, 200);
+        return !$urls->isEmpty() ? $this->successResponse($urls, 200) : $this->errorResponse('There are not  Urls to show', 404);
     }
 
-    public function short(Request $request)
+    public function short(UrlShorterRequest $request)
     {
-        // First check if the url exist
         $uri = UrlShortener::where('url', $request->url)->first();
 
         if ($uri == null) {
@@ -37,21 +38,21 @@ class UrlShortenerController extends BaseApiController
 
             UrlShortener::create([
                 'url' => $request->url,
-                'short' => $short
+                'short_url' => $short,
+                'is_nsfw' => $request->is_nsfw
             ]);
 
             $url = UrlShortener::where('url', $request->url)->first();
         }
 
-
-        return $url;
+        return $this->successResponse($url,200);
     }
 
     public function generateShortUrl()
     {
-        $result = base_convert(rand(1000, 9999), 10, 36);
+        $result = Str::random(6);
 
-        $data = UrlShortener::where('short', $result)->first();
+        $data = UrlShortener::where('short_url', $result)->first();
 
         if ($data != null) {
             $this->generateShortUrl();

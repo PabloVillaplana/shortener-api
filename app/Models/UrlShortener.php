@@ -13,6 +13,6 @@ class UrlShortener extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = [];
+    protected $fillable = ['url','short_url','visits','is_nsfw'];
 
 }

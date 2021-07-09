@@ -15,9 +15,10 @@ class CreateUrlShortTable extends Migration
     {
         Schema::create('url_short', function (Blueprint $table) {
             $table->id();
-            $table->string('url');
-            $table->string('short_url',5);
-            $table->integer('visits');
+            $table->text('url');
+            $table->string('short_url', 6);
+            $table->integer('visits')->nullable()->default(0);
+            $table->boolean('is_nsfw')->default(0);
             $table->timestamps();
         });
     }
