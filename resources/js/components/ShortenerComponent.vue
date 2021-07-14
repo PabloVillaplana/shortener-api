@@ -13,13 +13,12 @@
                                 NSFW
                             </label>
                         </div>
-
                     </div>
                     <div v-if="is_loading">
                         <infinite-loading></infinite-loading>
                     </div>
                     <div class="form-group" v-if="short_url">
-                        <strong>Short Url:</strong> <a :href="'/api/redirect/' + short_url.short_url" target="_blank">{{ short_url.short_url }}</a>
+                        <strong>Short Url:</strong> <a :href="'/' + short_url.short_url" target="_blank">{{ short_url.short_url }}</a>
                     </div>
                 </form>
             </div>
@@ -31,7 +30,7 @@
                             class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">{{ top_100.short_url }}</div>
-                                <a :href="'/api/redirect/' + top_100.short_url" target="_blank">{{ base_url + '/' + top_100.short_url }}</a>
+                                <a :href="'/' + top_100.short_url" target="_blank">{{ base_url + '/' + top_100.short_url }}</a>
                             </div>
                             <span class="badge bg-primary rounded-pill">{{ top_100.visits }}</span>
                         </li>

@@ -2,6 +2,6 @@
 
 @section('hero')
     <div id="app">
-        <example-component></example-component>
+        <shortener-component></shortener-component>
     </div>
 @endsection
