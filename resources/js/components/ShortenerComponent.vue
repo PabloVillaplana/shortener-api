@@ -136,13 +136,15 @@ export default {
         submitNewShortUrl: function (e) {
             e.preventDefault();
 
-            this.is_loading = true;
             this.short_url = [];
 
             let validation = this.validateUrl(this.url)
 
+                console.log(validation)
 
             if (validation == true) {
+                this.is_loading = true;
+                this.url_invalid = false;
                 axios.post('/api/generate/short_url', {
                     url: this.url,
                     is_nsfw: this.is_nsfw
@@ -154,6 +156,7 @@ export default {
                     this.is_loading = false;
                 }))
             } else {
+                this.is_loading = false;
                 this.url_invalid = true;
             }
         },
