@@ -1918,6 +1918,29 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -1932,7 +1955,9 @@ __webpack_require__.r(__webpack_exports__);
       url: '',
       short_url: '',
       base_url: '',
-      is_nsfw: 0
+      is_nsfw: 0,
+      showModal: false,
+      timer: null
     };
   },
   created: function created() {
@@ -1968,8 +1993,22 @@ __webpack_require__.r(__webpack_exports__);
         _this2.is_loading = false;
       });
     },
-    redirectToShortUrl: function redirectToShortUrl(e) {
-      console.log('eeee');
+    redirectToShortUrl: function redirectToShortUrl(url, stop) {
+      var _this3 = this;
+
+      this.showModal = true;
+
+      if (url != '') {
+        this.timer = setTimeout(function () {
+          _this3.showModal = false;
+          window.open(_this3.base_url + '/' + url, '_blank');
+        }, 10000);
+      }
+
+      if (stop) {
+        clearTimeout(this.timer);
+        this.showModal = false;
+      }
     }
   }
 });
@@ -6478,7 +6517,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.container[data-v-e056d894] {\n    margin-top: 2em;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.container[data-v-e056d894] {\n    margin-top: 2em;\n}\n.modal-mask[data-v-e056d894] {\n    position: fixed;\n    z-index: 9998;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background-color: rgba(0, 0, 0, .5);\n    display: table;\n    transition: opacity .3s ease;\n}\n.modal-wrapper[data-v-e056d894] {\n    display: table-cell;\n    vertical-align: middle;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -38030,18 +38069,41 @@ var render = function() {
             _vm._v(" "),
             _vm.short_url
               ? _c("div", { staticClass: "form-group" }, [
-                  _c("strong", [_vm._v("Short Url:")]),
-                  _vm._v(" "),
-                  _c(
-                    "a",
-                    {
-                      attrs: {
-                        href: "/" + _vm.short_url.short_url,
-                        target: "_blank"
-                      }
-                    },
-                    [_vm._v(_vm._s(_vm.short_url.short_url))]
-                  )
+                  _vm.short_url.is_nsfw
+                    ? _c("main", [
+                        _c(
+                          "a",
+                          {
+                            staticStyle: {
+                              cursor: "pointer",
+                              "text-decoration": "underline",
+                              color: "#ffc107"
+                            },
+                            on: {
+                              click: function($event) {
+                                return _vm.redirectToShortUrl(
+                                  _vm.short_url.short_url
+                                )
+                              }
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.short_url.short_url))]
+                        )
+                      ])
+                    : _c("main", [
+                        _c("strong", [_vm._v("Short Url:")]),
+                        _vm._v(" "),
+                        _c(
+                          "a",
+                          {
+                            attrs: {
+                              href: "/" + _vm.short_url.short_url,
+                              target: "_blank"
+                            }
+                          },
+                          [_vm._v(_vm._s(_vm.short_url.short_url))]
+                        )
+                      ])
                 ])
               : _vm._e()
           ]
@@ -38070,20 +38132,51 @@ var render = function() {
                             _vm._v(_vm._s(top_100.short_url))
                           ]),
                           _vm._v(" "),
-                          _c(
-                            "a",
-                            {
-                              attrs: {
-                                href: "/" + top_100.short_url,
-                                target: "_blank"
-                              }
-                            },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.base_url + "/" + top_100.short_url)
-                              )
-                            ]
-                          )
+                          top_100.is_nsfw
+                            ? _c("main", [
+                                _c(
+                                  "a",
+                                  {
+                                    staticStyle: {
+                                      cursor: "pointer",
+                                      "text-decoration": "underline",
+                                      color: "#ffc107"
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.redirectToShortUrl(
+                                          top_100.short_url
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.base_url + "/" + top_100.short_url
+                                      )
+                                    )
+                                  ]
+                                )
+                              ])
+                            : _c("main", [
+                                _c(
+                                  "a",
+                                  {
+                                    attrs: {
+                                      href: "/" + top_100.short_url,
+                                      target: "_blank"
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm.base_url + "/" + top_100.short_url
+                                      )
+                                    )
+                                  ]
+                                )
+                              ])
                         ]),
                         _vm._v(" "),
                         _c(
@@ -38118,88 +38211,78 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _vm._m(0)
+      _vm.showModal
+        ? _c(
+            "div",
+            [
+              _c("transition", { attrs: { name: "modal" } }, [
+                _c("div", { staticClass: "modal-mask" }, [
+                  _c("div", { staticClass: "modal-wrapper" }, [
+                    _c(
+                      "div",
+                      {
+                        staticClass: "modal-dialog",
+                        attrs: { role: "document" }
+                      },
+                      [
+                        _c("div", { staticClass: "modal-content" }, [
+                          _c("div", { staticClass: "modal-header" }, [
+                            _c("h5", { staticClass: "modal-title" }, [
+                              _vm._v(
+                                "The link clicked is not NSFW it will be redirected to it\n                                        in 10 seconds "
+                              )
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "modal-body" },
+                            [
+                              _c("infinite-loading"),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticStyle: { "text-align": "center" } },
+                                [
+                                  _c(
+                                    "button",
+                                    {
+                                      staticClass: "btn btn-warning",
+                                      attrs: { type: "button" },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.redirectToShortUrl(
+                                            "",
+                                            true
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "Stop and Back\n                                        "
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ])
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ],
+            1
+          )
+        : _vm._e()
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "modal fade",
-        attrs: {
-          id: "exampleModal",
-          tabindex: "-1",
-          role: "dialog",
-          "aria-labelledby": "exampleModalLabel",
-          "aria-hidden": "true"
-        }
-      },
-      [
-        _c(
-          "div",
-          { staticClass: "modal-dialog", attrs: { role: "document" } },
-          [
-            _c("div", { staticClass: "modal-content" }, [
-              _c("div", { staticClass: "modal-header" }, [
-                _c(
-                  "h5",
-                  {
-                    staticClass: "modal-title",
-                    attrs: { id: "exampleModalLabel" }
-                  },
-                  [_vm._v("Modal title")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  {
-                    staticClass: "close",
-                    attrs: {
-                      type: "button",
-                      "data-dismiss": "modal",
-                      "aria-label": "Close"
-                    }
-                  },
-                  [
-                    _c("span", { attrs: { "aria-hidden": "true" } }, [
-                      _vm._v("×")
-                    ])
-                  ]
-                )
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-body" }, [
-                _vm._v("\n                        ...\n                    ")
-              ]),
-              _vm._v(" "),
-              _c("div", { staticClass: "modal-footer" }, [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-secondary",
-                    attrs: { type: "button", "data-dismiss": "modal" }
-                  },
-                  [_vm._v("Close")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "button",
-                  { staticClass: "btn btn-primary", attrs: { type: "button" } },
-                  [_vm._v("Save changes")]
-                )
-              ])
-            ])
-          ]
-        )
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

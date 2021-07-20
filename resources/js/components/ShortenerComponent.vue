@@ -8,7 +8,8 @@
                         <input type="url" id="homepage" name="homepage" required v-model="url">
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" v-model="is_nsfw">
+                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+                                   v-model="is_nsfw">
                             <label class="form-check-label" for="flexCheckChecked">
                                 NSFW
                             </label>
@@ -18,7 +19,16 @@
                         <infinite-loading></infinite-loading>
                     </div>
                     <div class="form-group" v-if="short_url">
-                        <strong>Short Url:</strong> <a :href="'/' + short_url.short_url" target="_blank">{{ short_url.short_url }}</a>
+
+                        <main v-if="short_url.is_nsfw">
+                            <a @click="redirectToShortUrl( short_url.short_url )" style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
+                                    short_url.short_url
+                                }}</a>
+                        </main>
+                        <main v-else>
+                            <strong>Short Url:</strong> <a :href="'/' + short_url.short_url"
+                                                           target="_blank">{{ short_url.short_url }}</a>
+                        </main>
                     </div>
                 </form>
             </div>
@@ -30,7 +40,15 @@
                             class="list-group-item d-flex justify-content-between align-items-start">
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">{{ top_100.short_url }}</div>
-                                <a :href="'/' + top_100.short_url" target="_blank">{{ base_url + '/' + top_100.short_url }}</a>
+                                <main v-if="top_100.is_nsfw">
+                                    <a @click="redirectToShortUrl(top_100.short_url)" style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
+                                            base_url + '/' + top_100.short_url
+                                        }}</a>
+                                </main>
+                                <main v-else>
+                                    <a :href="'/' + top_100.short_url"
+                                       target="_blank">{{ base_url + '/' + top_100.short_url }}</a>
+                                </main>
                             </div>
                             <span class="badge bg-primary rounded-pill">{{ top_100.visits }}</span>
                         </li>
@@ -44,24 +62,29 @@
             </div>
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            ...
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+            <div v-if="showModal">
+                <transition name="modal">
+                    <div class="modal-mask">
+                        <div class="modal-wrapper">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">The link clicked is not NSFW it will be redirected to it
+                                            in 10 seconds </h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <infinite-loading></infinite-loading>
+                                        <div style="text-align: center;">
+                                            <button type="button" class="btn btn-warning"
+                                                    @click="redirectToShortUrl('', true)">Stop and Back
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </transition>
             </div>
         </div>
     </div>
@@ -84,7 +107,9 @@ export default {
             url: '',
             short_url: '',
             base_url: '',
-            is_nsfw: 0
+            is_nsfw: 0,
+            showModal: false,
+            timer: null,
         }
     },
     created() {
@@ -120,8 +145,20 @@ export default {
 
         },
 
-        redirectToShortUrl: function (e) {
-            console.log('eeee')
+        redirectToShortUrl: function (url, stop) {
+            this.showModal = true;
+
+            if (url != '') {
+                this.timer = setTimeout(() => {
+                    this.showModal = false;
+                    window.open(this.base_url + '/' + url, '_blank')
+                }, 10000);
+            }
+
+            if (stop) {
+                clearTimeout(this.timer)
+                this.showModal = false
+            }
         }
     }
 }
@@ -131,4 +168,22 @@ export default {
 .container {
     margin-top: 2em;
 }
+
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: table;
+    transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+
 </style>
