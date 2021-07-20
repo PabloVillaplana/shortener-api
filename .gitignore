@@ -13,3 +13,12 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+public/mix-manifest.json
+public/assets/admin/js/core/app.js
+public/assets/admin/css/laraspace.css
+public/assets/front/js/app.js
+public/assets/admin/js/sessions/login.js
+public/css/app.css
+storage/oauth-private.key
+storage/oauth-public.key
