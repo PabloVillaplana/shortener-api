@@ -5,6 +5,9 @@
                 <form method="post" enctype="multipart/form-data" @submit="submitNewShortUrl">
                     <h2>Digite Url</h2>
                     <div class="form-group" v-if="is_loading == false">
+                        <div v-if="url_invalid">
+                            <p>Invalid URL</p>
+                        </div>
                         <input type="url" id="homepage" name="homepage" required v-model="url">
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <div class="form-check">
@@ -112,6 +115,7 @@ export default {
             is_nsfw: 0,
             showModal: false,
             timer: null,
+            url_invalid: false,
         }
     },
     created() {
