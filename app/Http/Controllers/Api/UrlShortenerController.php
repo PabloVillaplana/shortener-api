@@ -15,7 +15,7 @@ class UrlShortenerController extends BaseApiController
         $url = UrlShortener::where('short_url', $shorUrl)->first();
 
         if ($url) {
-            $url->visits ++;
+            $url->visits++;
             $url->save();
         }
 
@@ -24,7 +24,7 @@ class UrlShortenerController extends BaseApiController
 
     public function topTenUrlVisits()
     {
-        $urls = UrlShortener::orderBy('visits','desc')->get();
+        $urls = UrlShortener::orderBy('visits', 'desc')->get();
 
         return !$urls->isEmpty() ? $this->successResponse($urls, 200) : $this->errorResponse('There are not  Urls to show', 404);
     }
@@ -45,7 +45,7 @@ class UrlShortenerController extends BaseApiController
             $url = UrlShortener::where('url', $request->url)->first();
         }
 
-        return $this->successResponse($url,200);
+        return $this->successResponse(!empty($url) ? $url : $uri, 200);
     }
 
     public function generateShortUrl()
