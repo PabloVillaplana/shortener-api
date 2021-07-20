@@ -1943,6 +1943,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -1959,7 +1962,8 @@ __webpack_require__.r(__webpack_exports__);
       base_url: '',
       is_nsfw: 0,
       showModal: false,
-      timer: null
+      timer: null,
+      url_invalid: false
     };
   },
   created: function created() {
@@ -37982,6 +37986,10 @@ var render = function() {
             _vm._v(" "),
             _vm.is_loading == false
               ? _c("div", { staticClass: "form-group" }, [
+                  _vm.url_invalid
+                    ? _c("div", [_c("p", [_vm._v("Invalid URL")])])
+                    : _vm._e(),
+                  _vm._v(" "),
                   _c("input", {
                     directives: [
                       {

@@ -5,6 +5,9 @@
                 <form method="post" enctype="multipart/form-data" @submit="submitNewShortUrl">
                     <h2>Digite Url</h2>
                     <div class="form-group" v-if="is_loading == false">
+                        <div v-if="url_invalid">
+                            <p>Invalid URL</p>
+                        </div>
                         <input type="url" id="homepage" name="homepage" required v-model="url">
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <div class="form-check">
@@ -112,6 +115,7 @@ export default {
             is_nsfw: 0,
             showModal: false,
             timer: null,
+            url_invalid: false,
         }
     },
     created() {
@@ -132,13 +136,15 @@ export default {
         submitNewShortUrl: function (e) {
             e.preventDefault();
 
-            this.is_loading = true;
             this.short_url = [];
 
             let validation = this.validateUrl(this.url)
 
+                console.log(validation)
 
             if (validation == true) {
+                this.is_loading = true;
+                this.url_invalid = false;
                 axios.post('/api/generate/short_url', {
                     url: this.url,
                     is_nsfw: this.is_nsfw
@@ -150,6 +156,7 @@ export default {
                     this.is_loading = false;
                 }))
             } else {
+                this.is_loading = false;
                 this.url_invalid = true;
             }
         },
