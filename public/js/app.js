@@ -1941,6 +1941,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -1981,17 +1983,23 @@ __webpack_require__.r(__webpack_exports__);
       e.preventDefault();
       this.is_loading = true;
       this.short_url = [];
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/generate/short_url', {
-        url: this.url,
-        is_nsfw: this.is_nsfw
-      }).then(function (response) {
-        _this2.getTopUrls();
+      var validation = this.validateUrl(this.url);
 
-        _this2.is_nsfw = 0;
-        _this2.short_url = response.data;
-        _this2.url = '';
-        _this2.is_loading = false;
-      });
+      if (validation == true) {
+        axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/generate/short_url', {
+          url: this.url,
+          is_nsfw: this.is_nsfw
+        }).then(function (response) {
+          _this2.getTopUrls();
+
+          _this2.is_nsfw = 0;
+          _this2.short_url = response.data;
+          _this2.url = '';
+          _this2.is_loading = false;
+        });
+      } else {
+        this.url_invalid = true;
+      }
     },
     redirectToShortUrl: function redirectToShortUrl(url, stop) {
       var _this3 = this;
@@ -2009,6 +2017,10 @@ __webpack_require__.r(__webpack_exports__);
         clearTimeout(this.timer);
         this.showModal = false;
       }
+    },
+    validateUrl: function validateUrl(url) {
+      var pattern = new RegExp('(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*(\\?[;&a-z\\d%_.~+=-@]*)?(\\#[-a-z\\d_@]*)?$', 'i');
+      return pattern.test(url);
     }
   }
 });

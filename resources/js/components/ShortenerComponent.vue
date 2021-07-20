@@ -21,8 +21,9 @@
                     <div class="form-group" v-if="short_url">
 
                         <main v-if="short_url.is_nsfw">
-                            <a @click="redirectToShortUrl( short_url.short_url )" style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
-                                    short_url.short_url
+                            <a @click="redirectToShortUrl( short_url.short_url )"
+                               style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
+                                short_url.short_url
                                 }}</a>
                         </main>
                         <main v-else>
@@ -41,8 +42,9 @@
                             <div class="ms-2 me-auto">
                                 <div class="fw-bold">{{ top_100.short_url }}</div>
                                 <main v-if="top_100.is_nsfw">
-                                    <a @click="redirectToShortUrl(top_100.short_url)" style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
-                                            base_url + '/' + top_100.short_url
+                                    <a @click="redirectToShortUrl(top_100.short_url)"
+                                       style="cursor: pointer; text-decoration: underline; color: #ffc107">{{
+                                        base_url + '/' + top_100.short_url
                                         }}</a>
                                 </main>
                                 <main v-else>
@@ -117,6 +119,7 @@ export default {
     },
     methods: {
         getTopUrls: function () {
+
             axios.get('/api/top-100').then((response => {
                 this.base_url = window.location.origin;
                 this.top_100_url = response.data;
@@ -132,17 +135,23 @@ export default {
             this.is_loading = true;
             this.short_url = [];
 
-            axios.post('/api/generate/short_url', {
-                url: this.url,
-                is_nsfw: this.is_nsfw
-            }).then((response => {
-                this.getTopUrls();
-                this.is_nsfw = 0;
-                this.short_url = response.data;
-                this.url = '';
-                this.is_loading = false;
-            }))
+            let validation = this.validateUrl(this.url)
 
+
+            if (validation == true) {
+                axios.post('/api/generate/short_url', {
+                    url: this.url,
+                    is_nsfw: this.is_nsfw
+                }).then((response => {
+                    this.getTopUrls();
+                    this.is_nsfw = 0;
+                    this.short_url = response.data;
+                    this.url = '';
+                    this.is_loading = false;
+                }))
+            } else {
+                this.url_invalid = true;
+            }
         },
 
         redirectToShortUrl: function (url, stop) {
@@ -159,6 +168,12 @@ export default {
                 clearTimeout(this.timer)
                 this.showModal = false
             }
+        },
+
+        validateUrl: function (url) {
+            var pattern = new RegExp('(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*(\\?[;&a-z\\d%_.~+=-@]*)?(\\#[-a-z\\d_@]*)?$', 'i')
+
+            return pattern.test(url);
         }
     }
 }
